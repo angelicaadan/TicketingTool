@@ -64,13 +64,13 @@ namespace ApiTicketingTool.Repository
                                 _ticket.customerIntearction = reader["customerIntearction"].ToString();
                                 _ticket.resolutionStatus = reader["resolutionStatus"].ToString();
                                 _ticket.firstResponseStatus = reader["firstResponseStatus"].ToString();
-                                //_ticket.tags = reader["tags"];
+                                _ticket.tags =  reader["tags"].ToString();
                                 _ticket.surveysResult = reader["surveysResult"].ToString();
                                 _ticket.companyID = reader["companyID"].ToString();
                                 _ticket.customerCompany = reader["customerCompany"].ToString();
                                 _ticket.projectNumber = reader["projectNumber"].ToString();
                                 _ticket.sharePointID = reader["sharePointID"].ToString();
-                                //_ticket.quatationID = reader["quatationID"] == DBNull.Value ? null : reader["quatationID"].ToString();
+                                _ticket.quotationID = reader["quotationID"].ToString();
                                 _ticket.customerEstimatedHours = (decimal)reader["customerEstimatedHours"];
                                 _ticket.tmHoursWeek1 = reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"];
                                 _ticket.tmHoursWeek2 = reader["tmHoursWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek2"];

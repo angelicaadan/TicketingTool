@@ -35,14 +35,13 @@ namespace ApiTicketingTool.Models
         public string customerIntearction { get; set; }
         public string resolutionStatus { get; set; }
         public string firstResponseStatus { get; set; }
-        public List<string> tags { get; set; }
-        //public string tagsString { get; set; }
+        public string tags { get; set; }
         public string surveysResult { get; set; }
         public string companyID { get; set; }
         public string customerCompany { get; set; }
         public string projectNumber { get; set; }
         public string sharePointID { get; set; }
-        public string quatationID { get; set; }
+        public string quotationID { get; set; }
         public decimal? customerEstimatedHours { get; set; }
         public decimal? tmHoursWeek1 { get; set; }
         public decimal? tmHoursWeek2 { get; set; }
