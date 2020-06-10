@@ -10,6 +10,9 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using ApiTicketingTool.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage;
 
 namespace ApiTicketingTool.Controllers
 {
@@ -17,12 +20,21 @@ namespace ApiTicketingTool.Controllers
     [ApiController]
     public class AuthController : Controller
     {
+        private IConfiguration _configuration;
+
+        protected IConfiguration Configuration => _configuration;
+
+        public AuthController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         private const string url = "https://tmconsulting.freshdesk.com/api/v2";
         [HttpPost("login")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public ActionResult Login(LoginCredentials credentials)
+        public async Task<ActionResult> LoginAsync(LoginCredentials credentials)
         {
             try
             {
@@ -51,10 +63,27 @@ namespace ApiTicketingTool.Controllers
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
                 // List data response.
-                HttpResponseMessage response = client.GetAsync(url + "/tickets/?include=stats").Result;
+                HttpResponseMessage response = client.GetAsync(url + "/tickets").Result;
 
                 if (response.IsSuccessStatusCode == true)
                 {
+                    var acc = CloudStorageAccount.Parse(_configuration["BlobConnectionString"]);
+                    var table = acc.CreateCloudTableClient();
+                    var tableTk = table.GetTableReference("tktoolauth");
+                    await tableTk.CreateIfNotExistsAsync();
+
+                    var datosCredentialsFD = new CredentialsTableStorage()
+                    {
+                        PartitionKey = credentials.Username,
+                        RowKey = credentials.Username,
+                        token = client.DefaultRequestHeaders.Authorization.ToString(),
+                        username = credentials.Username
+
+
+                    };
+                    TableOperation insertAzureStorage = TableOperation.InsertOrReplace(datosCredentialsFD);
+                    await tableTk.ExecuteAsync(insertAzureStorage);
+                    
                     var datos = new LoginResults()
                     {
                         status = "Autorizado"
