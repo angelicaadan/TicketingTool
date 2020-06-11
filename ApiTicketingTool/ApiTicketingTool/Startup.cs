@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApiTicketingTool;
 using ApiTicketingTool.Models;
-using ApiTicketingTool.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,7 +46,6 @@ namespace Api
             });
             services.AddDbContext<Context>(options =>
                  options.UseSqlServer(Configuration.GetValue<string>("Context")));
-            services.AddScoped<TicketRepository>();
             services.Configure<CookiePolicyOptions>(options =>
             {
 
