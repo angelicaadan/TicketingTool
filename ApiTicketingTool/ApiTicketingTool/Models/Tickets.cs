@@ -15,7 +15,7 @@ namespace ApiTicketingTool.Models
         public string customerID { get; set; }
         public string subject { get; set; }
         public string description { get; set; }
-        public int status { get; set; }
+        public string status { get; set; }
         public string priority { get; set; }
         public string source { get; set; }
         public string type { get; set; }

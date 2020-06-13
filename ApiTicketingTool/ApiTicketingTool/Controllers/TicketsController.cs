@@ -23,25 +23,15 @@ namespace ApiTicketingTool.Controllers
             _connectionString = configuration.GetValue<string>("Context");
 
         }
-        // GET: Tickets
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var response = GetAllTicket();
-        //    if (response == null)
-        //    {
-        //        return NoContent();
-        //    }
-        //    return Ok(response);
-        //}
         [HttpGet]
-        public async Task<ActionResult> GetAllTicket()
+        public async Task<ActionResult> GetAllTicket(string status)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("sp_GetTicketsAll", sql))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@status", status));
 
                     await sql.OpenAsync();
 
@@ -64,6 +54,7 @@ namespace ApiTicketingTool.Controllers
                                 _ticket.customerID = reader["customerID"].ToString();
                                 _ticket.subject = reader["subject"].ToString();
                                 _ticket.description = reader["description"].ToString();
+                                _ticket.status = reader["status"].ToString();
                                 _ticket.priority = reader["priority"].ToString();
                                 _ticket.source = reader["source"].ToString();
                                 _ticket.type = reader["type"].ToString();
@@ -89,7 +80,7 @@ namespace ApiTicketingTool.Controllers
                                 _ticket.projectNumber = reader["projectNumber"].ToString();
                                 _ticket.sharePointID = reader["sharePointID"].ToString();
                                 _ticket.quotationID = reader["quotationID"].ToString();
-                                _ticket.customerEstimatedHours = (decimal)reader["customerEstimatedHours"];
+                                _ticket.customerEstimatedHours = reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"];
                                 _ticket.tmHoursWeek1 = reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"];
                                 _ticket.tmHoursWeek2 = reader["tmHoursWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek2"];
                                 _ticket.tmHoursWeek3 = reader["tmHoursWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek3"];
@@ -99,19 +90,15 @@ namespace ApiTicketingTool.Controllers
                                 _ticket.progressWeek3 = reader["progressWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek3"];
                                 _ticket.progressWeek4 = reader["progressWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek4"];
                                 _ticket.billingMonth = reader["billingMonth"].ToString();
-                                _ticket.totalBillingHours = (decimal)reader["totalBillingHours"];
-                                _ticket.totalProgress = (decimal)reader["totalProgress"];
+                                _ticket.totalBillingHours = reader["totalBillingHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalBillingHours"];
+                                _ticket.totalProgress = reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"];
                                 _ticket.estimatedStartDate = reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"];
                                 _ticket.estimatedEndDate = reader["estimatedEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedEndDate"];
                                 _ticket.realStartDate = reader["realStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realStartDate"];
                                 _ticket.realEndDate = reader["realEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realEndDate"];
                                 _ticket.estimatedHourAgent = reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"];
                                 _ticket.guaranteeHours = reader["guaranteeHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["guaranteeHours"];
-
-
                             }
-
-
                         }
                         if (_ticket.TicketID != 0)
                         {
