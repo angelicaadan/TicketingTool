@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using ApiTicketingTool;
 using ApiTicketingTool.Models;
 using ApiTicketingTool.Repository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,7 +68,6 @@ namespace Api
                     });
 
             });
-
             services.AddMvc();
         }
 
