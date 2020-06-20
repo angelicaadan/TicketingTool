@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ApiTicketingTool.Models;
 using Microsoft.AspNetCore.Http;
@@ -108,6 +110,32 @@ namespace ApiTicketingTool.Controllers
                     }
                 }
             }
+        }
+        [HttpPost]
+        public async Task<System.Net.Http.HttpResponseMessage> PostTickets(PostFreshDesk data)
+        {
+            string route = "/tickets";
+            HttpClient client = new HttpClient();
+
+            client.BaseAddress = new Uri("https://tmconsulting.freshdesk.com/api/v2" + route);
+
+            string yourusername = "UNGq0cadwojfirXm6U7o";
+            string yourpwd = "X";
+
+
+            client.DefaultRequestHeaders.Authorization =
+              new AuthenticationHeaderValue(
+                  "Basic", Convert.ToBase64String(
+                      System.Text.ASCIIEncoding.ASCII.GetBytes(
+                         $"{yourusername}:{yourpwd}")));
+
+
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpResponseMessage response = client.PostAsJsonAsync(route,data).Result;
+
+            return response;
         }
     }
 }

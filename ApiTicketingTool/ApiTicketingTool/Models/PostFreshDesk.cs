@@ -8,6 +8,7 @@ namespace ApiTicketingTool.Models
 {
     public class PostFreshDesk
     {
+
         public int TicketID { get; set; }
         //Required
         [Required]
