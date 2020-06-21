@@ -55,12 +55,12 @@ namespace ApiTicketingTool
 
         }
 
-        public static HttpResponseMessage PutApi(string route, PutFreshDesk data, string urlParameters = "")
+        public static HttpResponseMessage PostApi( PostFreshDesk value)
         {
 
             HttpClient client = new HttpClient();
 
-            client.BaseAddress = new Uri(urlApi + route);
+            client.BaseAddress = new Uri(urlApi + "/tickets");
 
             string yourusername = "UNGq0cadwojfirXm6U7o";
             string yourpwd = "X";
@@ -76,7 +76,7 @@ namespace ApiTicketingTool
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
 
-            HttpResponseMessage response = client.PutAsJsonAsync(urlParameters, data).Result;
+            HttpResponseMessage response = client.PostAsJsonAsync(client.BaseAddress,value).Result;
 
             return response;
 

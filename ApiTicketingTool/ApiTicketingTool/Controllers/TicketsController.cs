@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ApiTicketingTool.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 
 namespace ApiTicketingTool.Controllers
@@ -112,7 +114,7 @@ namespace ApiTicketingTool.Controllers
             }
         }
         [HttpPost]
-        public async Task<System.Net.Http.HttpResponseMessage> PostTickets(PostFreshDesk data)
+        public async Task<HttpResponseMessage> PostTickets(PostFreshDesk data)
         {
             string route = "/tickets";
             HttpClient client = new HttpClient();
@@ -133,9 +135,15 @@ namespace ApiTicketingTool.Controllers
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
 
-            HttpResponseMessage response = client.PostAsJsonAsync(route,data).Result;
+            HttpResponseMessage response = client.PostAsJsonAsync(client.BaseAddress,data).Result;
 
             return response;
         }
+        //[HttpPost]
+        //public async Task<HttpResponseMessage> PostTicketsAsync(PostFreshDesk value)
+        //{
+        //    var responsePut = Conexion.PostApi(value);
+        //    return responsePut;
+        //}
     }
 }
