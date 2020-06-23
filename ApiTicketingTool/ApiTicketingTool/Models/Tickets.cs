@@ -72,17 +72,17 @@ namespace ApiTicketingTool.Models
         public List<Attachments> Attachments { get; set; }
     }
 
-    public class Attachments
-    {
-        public string id { get; set; }
+    //public class Attachments
+    //{
+    //    public string id { get; set; }
 
-        public string name { get; set; }
+    //    public string name { get; set; }
 
-        public string attachment_url { get; set; }
-        public DateTime created_at { get; set; }
+    //    public string attachment_url { get; set; }
+    //    public DateTime created_at { get; set; }
 
 
-    }
+    //}
 
     class JsonPathConverter : JsonConverter
     {
