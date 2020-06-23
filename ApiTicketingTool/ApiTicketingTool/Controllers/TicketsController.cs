@@ -117,11 +117,9 @@ namespace ApiTicketingTool.Controllers
         }
 
         [HttpPost]
-        public async Task<string> PostTickets(PostFreshDesk data)
+        public async Task<HttpResponseMessage> PostTickets(TicketFreshdesk data)
         {
-            try
-            {
-                string route = "/tickets";
+            string route = "/tickets";
                 HttpClient client = new HttpClient();
 
                 client.BaseAddress = new Uri("https://tmconsulting.freshdesk.com/api/v2" + route);
@@ -141,53 +139,50 @@ namespace ApiTicketingTool.Controllers
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage response = client.PostAsJsonAsync(client.BaseAddress, data).Result;
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    // La respuesta es correcta y por ejemplo la retorno como string
-                    return await response.Content.ReadAsStringAsync();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return($"ERROR : {ex.Message}");
-            }
-
-            return "KO";
+            return response;
         }
         //[HttpPost]
-        //public async Task<HttpResponseMessage> PostTicketsAsync(PostFreshDesk value)
-        //{
-        //    var responsePut = Conexion.PostApi(value);
-        //    return responsePut;
-        //}
-        //[HttpGet]
-        //public Task Main()
+        //public async Task Post2()
         //{
         //    string fdDomain = "tmconsulting"; // your freshdesk domain
-        //    string apiKey = "luisdiego@tmconsulting.mx";
-        //    string apiPath = "/api/v2/tickets/1"; // API path
-        //    string responseBody = String.Empty;
+        //    string apiKey = "UNGq0cadwojfirXm6U7o";
+        //    string apiPath = "/api/v2/tickets"; // API path
+        //    string json = "{ \"name\":\"Prueba2\",\"requester_id\" : 8022623444,\"email\": \"rodolfo.sanchez@cuamoc.com\", \"phone\":\"0000\",\"subject\": \"Support Needed...\", \"type\":\"Requerimiento\",\"status\": 2, \"priority\": 1,\"description\": \"prueba...\",\"responder_id\":8000138444,\"cc_emails\": [\"ram@freshdesk.com\",\"diana@freshdesk.com\"],\"custom_fields\": { \"diseo\":\"test\", \"proyecto\":1, \"horas_estimadas_por_cliente\":18, \"cf_horas_estimadas_por_agente\":15, \"horas_tampm_semana_1\":12, \"porcentaje_de_avance\":6, \"se_incluyeron_pruebas_unitarias\":\"NO\", \"se_incluyeron_objetos_de_seguridad\":\"NO\", \"mes_facturacin\":\"Julio 2020\"},\"due_by\" : \"2020-08-14T13:08:06Z\",\"email_config_id\" : 0,\"fr_due_by\" : \"2020-08-10T13:08:06Z\",\"group_id\" : 8000074542,\"product_id\" : 0,\"source\":2,\"tags\" : [] }";
         //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://" + fdDomain + ".freshdesk.com" + apiPath);
+        //    //HttpWebRequest class is used to Make a request to a Uniform Resource Identifier (URI).  
         //    request.ContentType = "application/json";
-        //    request.Method = "GET";
+        //    // Set the ContentType property of the WebRequest. 
+        //    request.Method = "POST";
+        //    byte[] byteArray = Encoding.UTF8.GetBytes(json);
+        //    // Set the ContentLength property of the WebRequest. 
+        //    request.ContentLength = byteArray.Length;
         //    string authInfo = apiKey + ":X"; // It could be your username:password also.
         //    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
         //    request.Headers["Authorization"] = "Basic " + authInfo;
+
+        //    //Get the stream that holds request data by calling the GetRequestStream method. 
+        //    Stream dataStream = request.GetRequestStream();
+        //    // Write the data to the request stream. 
+        //    dataStream.Write(byteArray, 0, byteArray.Length);
+        //    // Close the Stream object. 
+        //    dataStream.Close();
         //    try
         //    {
         //        Console.WriteLine("Submitting Request");
-        //        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-        //        {
-        //            Stream dataStream = response.GetResponseStream();
-        //            StreamReader reader = new StreamReader(dataStream);
-        //            responseBody = reader.ReadToEnd();
-        //            reader.Close();
-        //            dataStream.Close();
-        //            //return status code
-        //            Console.WriteLine("Status Code: {1} {0}", ((HttpWebResponse)response).StatusCode, (int)((HttpWebResponse)response).StatusCode);
-        //        }
-        //        Console.Out.WriteLine(responseBody);
+        //        WebResponse response = request.GetResponse();
+        //        // Get the stream containing content returned by the server.
+        //        //Send the request to the server by calling GetResponse. 
+        //        dataStream = response.GetResponseStream();
+        //        // Open the stream using a StreamReader for easy access. 
+        //        StreamReader reader = new StreamReader(dataStream);
+        //        // Read the content. 
+        //        string Response = reader.ReadToEnd();
+        //        //return status code
+        //        Console.WriteLine("Status Code: {1} {0}", ((HttpWebResponse)response).StatusCode, (int)((HttpWebResponse)response).StatusCode);
+        //        //return location header
+        //        Console.WriteLine("Location: {0}", response.Headers["Location"]);
+        //        //return the response 
+        //        Console.Out.WriteLine(Response);
         //    }
         //    catch (WebException ex)
         //    {
@@ -200,11 +195,13 @@ namespace ApiTicketingTool.Controllers
         //            Console.Write("Error Response: ");
         //            Console.WriteLine(reader.ReadToEnd());
         //        }
+
         //    }
         //    catch (Exception ex)
         //    {
         //        Console.WriteLine("ERROR");
         //        Console.WriteLine(ex.Message);
+
         //    }
         //}
     }
