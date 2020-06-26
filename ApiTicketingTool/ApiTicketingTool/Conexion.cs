@@ -1,6 +1,7 @@
 ﻿using ApiTicketingTool.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -55,32 +56,7 @@ namespace ApiTicketingTool
 
         }
 
-        public static HttpResponseMessage PostApi( PostFreshDesk value)
-        {
-
-            HttpClient client = new HttpClient();
-
-            client.BaseAddress = new Uri(urlApi + "/tickets");
-
-            string yourusername = "UNGq0cadwojfirXm6U7o";
-            string yourpwd = "X";
-
-
-            client.DefaultRequestHeaders.Authorization =
-              new AuthenticationHeaderValue(
-                  "Basic", Convert.ToBase64String(
-                      System.Text.ASCIIEncoding.ASCII.GetBytes(
-                         $"{yourusername}:{yourpwd}")));
-
-
-            client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpResponseMessage response = client.PostAsJsonAsync(client.BaseAddress,value).Result;
-
-            return response;
-
-        }
+    
         public static HttpResponseMessage GetTickets(string urlParameters = "")
         {
 
