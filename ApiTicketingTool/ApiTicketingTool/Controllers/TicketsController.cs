@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using ApiTicketingTool.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using RestSharp;
 
 namespace ApiTicketingTool.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class TicketsController : ControllerBase
     {
@@ -32,25 +26,30 @@ namespace ApiTicketingTool.Controllers
             _connectionString = configuration.GetValue<string>("Context");
 
         }
-        [HttpGet]
-        public async Task<ActionResult> GetAllTicket(string status)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [HttpGet("tickets/{status}")]
+        public async Task<ActionResult> GetTicket(string status)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand("sp_GetTicketsAll", sql))
+                using (SqlCommand cmd = new SqlCommand("sp_GetTicket", sql))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@status", status));
-
                     await sql.OpenAsync();
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         int x = -1;
                         List<Ticket> _list = new List<Ticket>();
-                        Ticket _ticket = new Ticket();
+                        Ticket _ticket = new Ticket() ;
+                    {
+                 
                         while (await reader.ReadAsync())
                         {
+                           
                             if ((int)reader["TicketID"] != x)
                             {
                                 if (x != -1)
@@ -59,54 +58,31 @@ namespace ApiTicketingTool.Controllers
                                 }
                                 x = (int)reader["TicketID"];
                                 _ticket = new Ticket();
+
                                 _ticket.TicketID = (int)reader["TicketID"];
-                                _ticket.customerID = reader["customerID"].ToString();
-                                _ticket.subject = reader["subject"].ToString();
-                                _ticket.description = reader["description"].ToString();
-                                _ticket.status = reader["status"].ToString();
-                                _ticket.priority = reader["priority"].ToString();
-                                _ticket.source = reader["source"].ToString();
-                                _ticket.type = reader["type"].ToString();
+                                _ticket.name = reader["name"].ToString();
+                                _ticket.requester_id = reader["customerID"].ToString();
                                 _ticket.email = reader["email"].ToString();
-                                _ticket.phoneNumberRequester = reader["phoneNumberRequester"].ToString();
-                                _ticket.IDFacebookProfile = reader["IDFacebookProfile"].ToString();
-                                _ticket.agentID = reader["agentID"].ToString();
-                                _ticket.groupID = reader["groupID"].ToString();
-                                _ticket.creationDate = (DateTime)reader["creationDate"];
-                                _ticket.expirationDate = (DateTime)reader["expirationDate"];
-                                _ticket.resolvedDate = (reader["resolvedDate"] == DBNull.Value ? (DateTime?)null : (DateTime?)reader["resolvedDate"]);
-                                _ticket.closedDate = (reader["closedDate"] == DBNull.Value ? (DateTime?)null : (DateTime?)reader["closedDate"]);
-                                _ticket.lastUpdateDate = (DateTime)reader["lastUpdateDate"];
-                                _ticket.fistResponseRequestDate = (reader["fistResponseRequestDate"] == DBNull.Value ? (DateTime?)null : (DateTime?)reader["fistResponseRequestDate"]);
-                                _ticket.agentInteractions = reader["agentInteractions"].ToString();
-                                _ticket.customerIntearction = reader["customerIntearction"].ToString();
-                                _ticket.resolutionStatus = reader["resolutionStatus"].ToString();
-                                _ticket.firstResponseStatus = reader["firstResponseStatus"].ToString();
+                                _ticket.phone = reader["phoneNumberRequester"].ToString();
+                                _ticket.subject = reader["subject"].ToString();
+                                _ticket.type = reader["type"].ToString();
+                                _ticket.status = reader["status"].ToString();
+                                _ticket.priority =reader["priority"].ToString();
+                                _ticket.description = reader["description"].ToString();
+                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString(), 16);
+                                _ticket.cc_emails= reader["cc_emails"].ToString();
+                                _ticket.due_by= (DateTime)reader["expirationDate"];
+                                _ticket.fr_due_by = (DateTime)reader["creationDate"];
+                                _ticket.group_id = reader["groupID"].ToString();
+                                _ticket.source = reader["source"].ToString();
                                 _ticket.tags = reader["tags"].ToString();
-                                _ticket.surveysResult = reader["surveysResult"].ToString();
-                                _ticket.companyID = reader["companyID"].ToString();
-                                _ticket.customerCompany = reader["customerCompany"].ToString();
-                                _ticket.projectNumber = reader["projectNumber"].ToString();
-                                _ticket.sharePointID = reader["sharePointID"].ToString();
-                                _ticket.quotationID = reader["quotationID"].ToString();
-                                _ticket.customerEstimatedHours = reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"];
-                                _ticket.tmHoursWeek1 = reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"];
-                                _ticket.tmHoursWeek2 = reader["tmHoursWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek2"];
-                                _ticket.tmHoursWeek3 = reader["tmHoursWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek3"];
-                                _ticket.tmHoursWeek4 = reader["tmHoursWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek4"];
-                                _ticket.progressWeek1 = reader["progressWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek1"];
-                                _ticket.progressWeek2 = reader["progressWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek2"];
-                                _ticket.progressWeek3 = reader["progressWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek3"];
-                                _ticket.progressWeek4 = reader["progressWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek4"];
-                                _ticket.billingMonth = reader["billingMonth"].ToString();
-                                _ticket.totalBillingHours = reader["totalBillingHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalBillingHours"];
-                                _ticket.totalProgress = reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"];
-                                _ticket.estimatedStartDate = reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"];
-                                _ticket.estimatedEndDate = reader["estimatedEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedEndDate"];
-                                _ticket.realStartDate = reader["realStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realStartDate"];
-                                _ticket.realEndDate = reader["realEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realEndDate"];
-                                _ticket.estimatedHourAgent = reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"];
-                                _ticket.guaranteeHours = reader["guaranteeHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["guaranteeHours"];
+                                _ticket.custom_fields.diseo= reader["name"].ToString();
+                                _ticket.custom_fields.proyecto = reader["projectNumber"].ToString();
+                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDecimal(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.cf_horas_estimadas_por_agente = Convert.ToInt64(reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"]);
+                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDecimal(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
+                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDecimal(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
+                                _ticket.custom_fields.mes_facturacin = reader["billingMonth"].ToString();
                             }
                         }
                         if (_ticket.TicketID != 0)
@@ -122,7 +98,77 @@ namespace ApiTicketingTool.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        [HttpPost("users")]
+        [HttpGet("ticket/{ticketID}")]
+        public async Task<ActionResult> GetTicketID(int ticketID)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("sp_GetTicketID", sql))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.Add(new SqlParameter("@ticketID", ticketID));
+
+                await sql.OpenAsync();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    int x = -1;
+                    List<Ticket> _list = new List<Ticket>();
+                    Ticket _ticket = new Ticket();
+                    {
+
+                        while (await reader.ReadAsync())
+                        {
+
+                            if ((int)reader["TicketID"] != x)
+                            {
+                                if (x != -1)
+                                {
+                                    _list.Add(_ticket);
+                                }
+                                x = (int)reader["TicketID"];
+                                _ticket = new Ticket();
+
+                                _ticket.TicketID = (int)reader["TicketID"];
+                                _ticket.name = reader["name"].ToString();
+                                _ticket.requester_id = reader["customerID"].ToString();
+                                _ticket.email = reader["email"].ToString();
+                                _ticket.phone = reader["phoneNumberRequester"].ToString();
+                                _ticket.subject = reader["subject"].ToString();
+                                _ticket.type = reader["type"].ToString();
+                                _ticket.status = reader["status"].ToString();
+                                _ticket.priority = reader["priority"].ToString();
+                                _ticket.description = reader["description"].ToString();
+                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString(), 16);
+                                _ticket.cc_emails = reader["cc_emails"].ToString();
+                                _ticket.due_by = (DateTime)reader["expirationDate"];
+                                _ticket.fr_due_by = (DateTime)reader["creationDate"];
+                                _ticket.group_id = reader["groupID"].ToString();
+                                _ticket.source = reader["source"].ToString();
+                                _ticket.tags = reader["tags"].ToString();
+                                _ticket.custom_fields.diseo = reader["name"].ToString();
+                                _ticket.custom_fields.proyecto = reader["projectNumber"].ToString();
+                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDecimal(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.cf_horas_estimadas_por_agente = Convert.ToInt64(reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"]);
+                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDecimal(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
+                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDecimal(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
+                                _ticket.custom_fields.mes_facturacin = reader["billingMonth"].ToString();
+                            }
+                        }
+                        if (_ticket.TicketID != 0)
+                        {
+                            _list.Add(_ticket);
+                        }
+                        return Ok(_list);
+                    }
+                }
+            }
+        }
+
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [HttpPost("tickets/users")]
         public async Task<IActionResult> PostTicketsAsync([FromBody] TicketFreshDesk data)
         {
             try
@@ -151,6 +197,37 @@ namespace ApiTicketingTool.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [HttpGet("status")]
+        public async Task<ActionResult> GetStatus()
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("spGetStatus", sql))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                await sql.OpenAsync();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    List<Status> _list = new List<Status>();
+                    Status _Status = new Status();
+                    {
+
+                        while (await reader.ReadAsync())
+                        {
+                            _Status = new Status();
+                            _Status.statusID = reader["statusID"].ToString();
+                            _Status.statusDescription = reader["statusDescription"].ToString();
+                        }
+                        _list.Add(_Status);
+                    }
+                    return Ok(_list);
+                }
             }
         }
     }
