@@ -118,18 +118,15 @@ namespace ApiTicketingTool.Controllers
                 }
             }
         }
-<<<<<<< HEAD
 
         [HttpPost]
         public async Task<HttpResponseMessage> PostTickets(TicketFreshdesk data)
-=======
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost("users")]
         public async Task<IActionResult> PostTicketsAsync([FromBody] TicketFreshDesk data)
->>>>>>> 20121345d2f22c72d54fcb3e330cca365f9f17bf
         {
             try
             {
