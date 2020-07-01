@@ -7,42 +7,77 @@ namespace ApiTicketingTool.Models
 {
     public class TicketFreshDesk
     {
-        public string name { get; set; }//name
-        public Int64 requester_id { get; set; }//requester_id 
-        public string email { get; set; } //email
-        public string phone { get; set; }//phone
-        public string subject { get; set; }//subject 
-        public string type { get; set; }//type
-        public int status { get; set; }//status
-        public int priority { get; set; }//priority
-        public string description { get; set; }//description
-        public Int64 responder_id { get; set; }//responder_id
-        public List<string> cc_emails { get; set; }//cc_emails
-        public Json custom_fields { get; set; }
-        public DateTime due_by { get; set; }
+
+        public TicketFreshDesk()
+        {
+            this.custom_fields = new Json();
+        }
+        public int TicketID { get; set; }
         public int? email_config_id { get; set; }
-        public DateTime fr_due_by { get; set; }
-        public Int64 group_id { get; set; }//group_id
-        public int? product_id { get; set; }
+        public Int64 group_id { get; set; }
+        public int priority { get; set; }
+        public Int64 requester_id { get; set; }
+        public Int64 responder_id { get; set; }
         public int source { get; set; }
-        public List<string> tags { get; set; }//tags
-
-
+        public int status { get; set; }//status
+        public string subject { get; set; }
+        public int? product_id { get; set; }
+        public string type { get; set; }
+        public string description { get; set; }
+        public Json custom_fields { get; set; }
+        public string tags { get; set; }
     }
-
-    // [JsonConverter(typeof(JsonPathConverter))]
+    public class PostTicketFreshDesk
+    {
+        public int? email_config_id { get; set; }
+        public Int64 group_id { get; set; }
+        public int priority { get; set; }
+        public Int64 requester_id { get; set; }
+        public Int64 responder_id { get; set; }
+        public int source { get; set; }
+        public int status { get; set; }//status
+        public string subject { get; set; }
+        public int? product_id { get; set; }
+        public string type { get; set; }
+        public string description { get; set; }
+        public Json custom_fields { get; set; }
+        public List<string> tags { get; set; }
+    }
     public class Json
     {
+        public string cliente { get; set; }
+        public string id_cotizador { get; set; }
+        public string proyecto { get; set; }
         public string diseo { get; set; }
-        public int proyecto { get; set; }
         public double horas_estimadas_por_cliente { get; set; }
+        public DateTime cf_fecha_de_estimada_inicio { get; set; }
+        public double porcentaje_de_avance { get; set; }
+        public double horas_tampm_semana_2 { get; set; }
+        public double horas_tampm_semana_1 { get; set; }
+        public int tickets_relacionados { get; set; }
+        public DateTime cf_fecha_de_estimada_entrega { get; set; }
+        public double horas_tampm_semana_3 { get; set; }
+        public DateTime cf_fecha_de_real_inicio { get; set; }
+        public double horas_tampm_semana_4 { get; set; }
+        public DateTime cf_fecha_de_real_entrega { get; set; }
+        public double avance_semana_2 { get; set; }
+        public double avance_semana_3 { get; set; }
+        public double avance_semana_4 { get; set; }
+        public double horas_garanta { get; set; }
         public Int64 cf_horas_estimadas_por_agente { get; set; }
-        public int horas_tampm_semana_1 { get; set; }
-        public int porcentaje_de_avance { get; set; }
+        public string mes_facturacin { get; set; }
         public string se_incluyeron_pruebas_unitarias { get; set; }
         public string se_incluyeron_objetos_de_seguridad { get; set; }
-        public string mes_facturacin { get; set; }
 
+    }
+    public class JsonPut
+    {
+        public List<int> tickets_relacionados { get; set; }
+
+    }
+    public class PutTicketFreshDesk
+    {
+        public JsonPut custom_fields { get; set; }
     }
 
 }
