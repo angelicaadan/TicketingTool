@@ -14,7 +14,9 @@ namespace ApiTicketingTool
         {
         }
         public DbSet<Ticket> Ticket { get; set; }
-        public DbSet<TicketFreshDesk> TicketFreshDesk { get; set; }
+        public DbSet<PostTicketFreshDesk> PostTicketFreshDesk { get; set; }
+        public DbSet<PutTicketFreshDesk> PutTicketFreshDesk { get; set; }
+
         public DbSet<Status> Status { get; set; }
 
     }

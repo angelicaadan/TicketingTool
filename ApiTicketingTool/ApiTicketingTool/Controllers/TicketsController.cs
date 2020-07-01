@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ApiTicketingTool.Controllers
 {
@@ -43,46 +44,54 @@ namespace ApiTicketingTool.Controllers
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         int x = -1;
-                        List<Ticket> _list = new List<Ticket>();
-                        Ticket _ticket = new Ticket() ;
+                        List<TicketFreshDesk> _list = new List<TicketFreshDesk>();
+                        TicketFreshDesk _ticket = new TicketFreshDesk() ;
                     {
-                 
+                        List<string> tags = new List<string>();
+
                         while (await reader.ReadAsync())
                         {
-                           
-                            if ((int)reader["TicketID"] != x)
+
+                            if ((int)reader["ticketID"] != x)
                             {
                                 if (x != -1)
                                 {
                                     _list.Add(_ticket);
                                 }
-                                x = (int)reader["TicketID"];
-                                _ticket = new Ticket();
-
-                                _ticket.TicketID = (int)reader["TicketID"];
-                                _ticket.name = reader["name"].ToString();
-                                _ticket.requester_id = reader["customerID"].ToString();
-                                _ticket.email = reader["email"].ToString();
-                                _ticket.phone = reader["phoneNumberRequester"].ToString();
+                                x = (int)reader["ticketID"];
+                                _ticket = new TicketFreshDesk();
+                                _ticket.TicketID = (int)reader["ticketID"];
+                                _ticket.group_id = Convert.ToInt64(reader["groupID"].ToString());
+                                _ticket.priority = Convert.ToInt32(reader["priority"].ToString());
+                                _ticket.requester_id = Convert.ToInt64(reader["customerID"].ToString());
+                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString(), 16);
+                                _ticket.source = Convert.ToInt32(reader["source"].ToString());
+                                _ticket.status = Convert.ToInt32(reader["status"].ToString());
                                 _ticket.subject = reader["subject"].ToString();
                                 _ticket.type = reader["type"].ToString();
-                                _ticket.status = reader["status"].ToString();
-                                _ticket.priority =reader["priority"].ToString();
                                 _ticket.description = reader["description"].ToString();
-                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString(), 16);
-                                _ticket.cc_emails= reader["cc_emails"].ToString();
-                                _ticket.due_by= (DateTime)reader["expirationDate"];
-                                _ticket.fr_due_by = (DateTime)reader["creationDate"];
-                                _ticket.group_id = reader["groupID"].ToString();
-                                _ticket.source = reader["source"].ToString();
-                                _ticket.tags = reader["tags"].ToString();
-                                _ticket.custom_fields.diseo= reader["name"].ToString();
+                                _ticket.custom_fields.cliente = Convert.ToString(reader["customerCompany"].ToString());
+                                _ticket.custom_fields.id_cotizador = Convert.ToString(reader["quotationID"].ToString());
                                 _ticket.custom_fields.proyecto = reader["projectNumber"].ToString();
-                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDecimal(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.diseo = reader["name"].ToString();
+                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDouble(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.cf_fecha_de_estimada_inicio = Convert.ToDateTime(reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"]);
+                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDouble(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
+                                _ticket.custom_fields.horas_tampm_semana_2 = Convert.ToDouble(reader["tmHoursWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek2"]);
+                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDouble(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
+                                _ticket.custom_fields.cf_fecha_de_estimada_entrega = Convert.ToDateTime(reader["estimatedEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedEndDate"]);
+                                _ticket.custom_fields.horas_tampm_semana_3 = Convert.ToDouble(reader["tmHoursWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek3"]);
+                                _ticket.custom_fields.cf_fecha_de_real_inicio = Convert.ToDateTime(reader["realStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realStartDate"]);
+                                _ticket.custom_fields.horas_tampm_semana_4 = Convert.ToDouble(reader["tmHoursWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek4"]);
+                                _ticket.custom_fields.cf_fecha_de_real_entrega = Convert.ToDateTime(reader["realEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realEndDate"]);
+                                _ticket.custom_fields.avance_semana_2 = Convert.ToDouble(reader["progressWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek2"]);
+                                _ticket.custom_fields.avance_semana_3 = Convert.ToDouble(reader["progressWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek3"]);
+                                _ticket.custom_fields.avance_semana_4 = Convert.ToDouble(reader["progressWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek4"]);
+                                _ticket.custom_fields.horas_garanta = Convert.ToDouble(reader["guaranteeHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["guaranteeHours"]);
                                 _ticket.custom_fields.cf_horas_estimadas_por_agente = Convert.ToInt64(reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"]);
-                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDecimal(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
-                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDecimal(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
                                 _ticket.custom_fields.mes_facturacin = reader["billingMonth"].ToString();
+                                _ticket.tags = reader["tags"].ToString();
+                                
                             }
                         }
                         if (_ticket.TicketID != 0)
@@ -112,8 +121,8 @@ namespace ApiTicketingTool.Controllers
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     int x = -1;
-                    List<Ticket> _list = new List<Ticket>();
-                    Ticket _ticket = new Ticket();
+                    List<TicketFreshDesk> _list = new List<TicketFreshDesk>();
+                    TicketFreshDesk _ticket = new TicketFreshDesk();
                     {
 
                         while (await reader.ReadAsync())
@@ -126,32 +135,40 @@ namespace ApiTicketingTool.Controllers
                                     _list.Add(_ticket);
                                 }
                                 x = (int)reader["TicketID"];
-                                _ticket = new Ticket();
+                                _ticket = new TicketFreshDesk();
 
-                                _ticket.TicketID = (int)reader["TicketID"];
-                                _ticket.name = reader["name"].ToString();
-                                _ticket.requester_id = reader["customerID"].ToString();
-                                _ticket.email = reader["email"].ToString();
-                                _ticket.phone = reader["phoneNumberRequester"].ToString();
+                                _ticket.TicketID = (int)reader["ticketID"];
+                                _ticket.group_id = Convert.ToInt64(reader["groupID"].ToString());
+                                _ticket.priority = Convert.ToInt32(reader["priority"].ToString());
+                                _ticket.requester_id = Convert.ToInt64(reader["customerID"].ToString());
+                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString());
+                                _ticket.source = Convert.ToInt32(reader["source"].ToString());
+                                _ticket.status = Convert.ToInt32(reader["status"].ToString());
                                 _ticket.subject = reader["subject"].ToString();
                                 _ticket.type = reader["type"].ToString();
-                                _ticket.status = reader["status"].ToString();
-                                _ticket.priority = reader["priority"].ToString();
                                 _ticket.description = reader["description"].ToString();
-                                _ticket.responder_id = Convert.ToInt64(reader["agentID"].ToString(), 16);
-                                _ticket.cc_emails = reader["cc_emails"].ToString();
-                                _ticket.due_by = (DateTime)reader["expirationDate"];
-                                _ticket.fr_due_by = (DateTime)reader["creationDate"];
-                                _ticket.group_id = reader["groupID"].ToString();
-                                _ticket.source = reader["source"].ToString();
-                                _ticket.tags = reader["tags"].ToString();
-                                _ticket.custom_fields.diseo = reader["name"].ToString();
+                                _ticket.custom_fields.cliente = Convert.ToString(reader["customerCompany"].ToString());
+                                _ticket.custom_fields.id_cotizador = Convert.ToString(reader["quotationID"].ToString());
                                 _ticket.custom_fields.proyecto = reader["projectNumber"].ToString();
-                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDecimal(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.diseo = reader["name"].ToString();
+                                _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDouble(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
+                                _ticket.custom_fields.cf_fecha_de_estimada_inicio = Convert.ToDateTime(reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"]);
+                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDouble(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
+                                _ticket.custom_fields.horas_tampm_semana_2 = Convert.ToDouble(reader["tmHoursWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek2"]);
+                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDouble(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
+                                _ticket.custom_fields.cf_fecha_de_estimada_entrega = Convert.ToDateTime(reader["estimatedEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedEndDate"]);
+                                _ticket.custom_fields.horas_tampm_semana_3 = Convert.ToDouble(reader["tmHoursWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek3"]);
+                                _ticket.custom_fields.cf_fecha_de_real_inicio = Convert.ToDateTime(reader["realStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realStartDate"]);
+                                _ticket.custom_fields.horas_tampm_semana_4 = Convert.ToDouble(reader["tmHoursWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek4"]);
+                                _ticket.custom_fields.cf_fecha_de_real_entrega = Convert.ToDateTime(reader["realEndDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["realEndDate"]);
+                                _ticket.custom_fields.avance_semana_2 = Convert.ToDouble(reader["progressWeek2"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek2"]);
+                                _ticket.custom_fields.avance_semana_3 = Convert.ToDouble(reader["progressWeek3"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek3"]);
+                                _ticket.custom_fields.avance_semana_4 = Convert.ToDouble(reader["progressWeek4"] == DBNull.Value ? (decimal?)null : (decimal)reader["progressWeek4"]);
+                                _ticket.custom_fields.horas_garanta = Convert.ToDouble(reader["guaranteeHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["guaranteeHours"]);
                                 _ticket.custom_fields.cf_horas_estimadas_por_agente = Convert.ToInt64(reader["estimatedHourAgent"] == DBNull.Value ? (decimal?)null : (decimal)reader["estimatedHourAgent"]);
-                                _ticket.custom_fields.horas_tampm_semana_1 = Convert.ToDecimal(reader["tmHoursWeek1"] == DBNull.Value ? (decimal?)null : (decimal)reader["tmHoursWeek1"]);
-                                _ticket.custom_fields.porcentaje_de_avance = Convert.ToDecimal(reader["totalProgress"] == DBNull.Value ? (decimal?)null : (decimal)reader["totalProgress"]);
                                 _ticket.custom_fields.mes_facturacin = reader["billingMonth"].ToString();
+                                _ticket.tags = reader["tags"].ToString();
+
                             }
                         }
                         if (_ticket.TicketID != 0)
@@ -171,7 +188,7 @@ namespace ApiTicketingTool.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost("tickets/users")]
-        public async Task<IActionResult> PostTicketsAsync([FromBody] TicketFreshDesk data)
+        public async Task<IActionResult> PostTicketsAsync([FromBody] PostTicketFreshDesk data)
         {
             try
             {
@@ -205,6 +222,41 @@ namespace ApiTicketingTool.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
+        [HttpPut("tickets/usersPut")]
+        public async Task<IActionResult> PutTicketsAsync([FromBody] PutTicketFreshDesk data)
+        {
+            try
+            {
+                var dataAsString = JsonConvert.SerializeObject(data);
+
+                var httpClient = new HttpClient();
+                string yourusername = "UNGq0cadwojfirXm6U7o";
+                string yourpwd = "X";
+
+
+                httpClient.DefaultRequestHeaders.Authorization =
+                  new AuthenticationHeaderValue(
+                      "Basic", Convert.ToBase64String(
+                          System.Text.ASCIIEncoding.ASCII.GetBytes(
+                             $"{yourusername}:{yourpwd}")));
+
+                httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+                var url = "https://tmconsulting.freshdesk.com/api/v2/tickets";
+                var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");
+                var result = await httpClient.PutAsync(url, content);
+
+                return Ok(result.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [HttpGet("status")]
         public async Task<ActionResult> GetStatus()
         {
@@ -225,8 +277,9 @@ namespace ApiTicketingTool.Controllers
                             _Status = new Status();
                             _Status.statusID = reader["statusID"].ToString();
                             _Status.statusDescription = reader["statusDescription"].ToString();
+                            _list.Add(_Status);
+
                         }
-                        _list.Add(_Status);
                     }
                     return Ok(_list);
                 }
