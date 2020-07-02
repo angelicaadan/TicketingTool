@@ -181,8 +181,6 @@ namespace ApiTicketingTool.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<HttpResponseMessage> PostTickets(TicketFreshdesk data)
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
@@ -190,6 +188,7 @@ namespace ApiTicketingTool.Controllers
         [HttpPost("tickets/users")]
         public async Task<IActionResult> PostTicketsAsync([FromBody] PostTicketFreshDesk data)
         {
+
             try
             {
                 var dataAsString = JsonConvert.SerializeObject(data);
