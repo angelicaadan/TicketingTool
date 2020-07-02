@@ -47,23 +47,23 @@ namespace ApiTicketingTool.Models
     {
         public string cliente { get; set; }
         public string id_cotizador { get; set; }
-        public string proyecto { get; set; }
+        public Int64? proyecto { get; set; }
         public string diseo { get; set; }
-        public double horas_estimadas_por_cliente { get; set; }
-        public DateTime cf_fecha_de_estimada_inicio { get; set; }
-        public double porcentaje_de_avance { get; set; }
-        public double horas_tampm_semana_2 { get; set; }
-        public double horas_tampm_semana_1 { get; set; }
-        public int tickets_relacionados { get; set; }
-        public DateTime cf_fecha_de_estimada_entrega { get; set; }
-        public double horas_tampm_semana_3 { get; set; }
-        public DateTime cf_fecha_de_real_inicio { get; set; }
-        public double horas_tampm_semana_4 { get; set; }
-        public DateTime cf_fecha_de_real_entrega { get; set; }
-        public double avance_semana_2 { get; set; }
-        public double avance_semana_3 { get; set; }
-        public double avance_semana_4 { get; set; }
-        public double horas_garanta { get; set; }
+        public Double? horas_estimadas_por_cliente { get; set; }
+        public DateTime? cf_fecha_de_estimada_inicio { get; set; }
+        public int? porcentaje_de_avance { get; set; }
+        public Double? horas_tampm_semana_2 { get; set; }
+        public Double? horas_tampm_semana_1 { get; set; }
+        public string tickets_relacionados { get; set; }
+        public string cf_fecha_de_estimada_entrega { get; set; }
+        public Double? horas_tampm_semana_3 { get; set; }
+        public DateTime? cf_fecha_de_real_inicio { get; set; }
+        public Double? horas_tampm_semana_4 { get; set; }
+        public DateTime? cf_fecha_de_real_entrega { get; set; }
+        public Double? avance_semana_2 { get; set; }
+        public Double? avance_semana_3 { get; set; }
+        public Double? avance_semana_4 { get; set; }
+        public Double? horas_garanta { get; set; }
         public Int64 cf_horas_estimadas_por_agente { get; set; }
         public string mes_facturacin { get; set; }
         public string se_incluyeron_pruebas_unitarias { get; set; }
@@ -72,7 +72,7 @@ namespace ApiTicketingTool.Models
     }
     public class JsonPut
     {
-        public List<int> tickets_relacionados { get; set; }
+        public List<string> tickets_relacionados { get; set; }
 
     }
     public class PutTicketFreshDesk
