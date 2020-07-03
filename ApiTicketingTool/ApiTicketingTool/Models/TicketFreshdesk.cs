@@ -79,5 +79,17 @@ namespace ApiTicketingTool.Models
     {
         public JsonPut custom_fields { get; set; }
     }
+    public class JsonPut2
+    {
+        public string tickets_relacionados { get; set; }
 
+    }
+    public class Put2TicketFreshDesk
+    {
+        public Put2TicketFreshDesk()
+        {
+            this.custom_fields = new JsonPut2();
+        }
+        public JsonPut2 custom_fields { get; set; }
+    }
 }
