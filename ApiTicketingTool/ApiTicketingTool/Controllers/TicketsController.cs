@@ -226,7 +226,12 @@ namespace ApiTicketingTool.Controllers
         {
             try
             {
-                var dataAsString = JsonConvert.SerializeObject(data);
+                var csvString = String.Join(",", data.custom_fields.tickets_relacionados);
+
+                Put2TicketFreshDesk obj = new Put2TicketFreshDesk();
+                obj.custom_fields.tickets_relacionados = csvString;
+
+                var dataAsString = JsonConvert.SerializeObject(obj);
 
                 var httpClient = new HttpClient();
                 string yourusername = "UNGq0cadwojfirXm6U7o";
