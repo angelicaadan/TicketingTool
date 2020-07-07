@@ -80,8 +80,6 @@ namespace ApiTicketingTool.Models
     {
         public JsonPut custom_fields { get; set; }
     }
-<<<<<<< HEAD
-=======
     public class JsonPut2
     {
         public string tickets_relacionados { get; set; }
@@ -95,5 +93,4 @@ namespace ApiTicketingTool.Models
         }
         public JsonPut2 custom_fields { get; set; }
     }
->>>>>>> d2c910e6077c98307c3e9b3598a7f60d7f157a79
 }
