@@ -72,7 +72,7 @@ namespace ApiTicketingTool.Controllers
                                 _ticket.description = reader["description"].ToString();
                                 _ticket.custom_fields.cliente = Convert.ToString(reader["customerCompany"].ToString());
                                 _ticket.custom_fields.id_cotizador = Convert.ToString(reader["quotationID"].ToString());
-                                _ticket.custom_fields.proyecto = Convert.ToInt32((int)reader["projectNumber"]); 
+                               // _ticket.custom_fields.proyecto = Convert.ToInt32((int)reader["projectNumber"]); 
                                 _ticket.custom_fields.diseo = reader["name"].ToString();
                                 _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDouble(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
                                 _ticket.custom_fields.cf_fecha_de_estimada_inicio = Convert.ToString(reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"]);
@@ -149,7 +149,7 @@ namespace ApiTicketingTool.Controllers
                                 _ticket.description = reader["description"].ToString();
                                 _ticket.custom_fields.cliente = Convert.ToString(reader["customerCompany"].ToString());
                                 _ticket.custom_fields.id_cotizador = Convert.ToString(reader["quotationID"].ToString());
-                                _ticket.custom_fields.proyecto = Convert.ToInt16(reader["projectNumber"].ToString());
+                               // _ticket.custom_fields.proyecto = Convert.ToInt16(reader["projectNumber"].ToString());
                                 _ticket.custom_fields.diseo = reader["name"].ToString();
                                 _ticket.custom_fields.horas_estimadas_por_cliente = Convert.ToDouble(reader["customerEstimatedHours"] == DBNull.Value ? (decimal?)null : (decimal)reader["customerEstimatedHours"]);
                                 _ticket.custom_fields.cf_fecha_de_estimada_inicio = Convert.ToString(reader["estimatedStartDate"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["estimatedStartDate"]);
@@ -186,8 +186,10 @@ namespace ApiTicketingTool.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost("tickets/users")]
-        public async Task<IActionResult> PostTicketsAsync([FromBody] PostTicketFreshDesk data)
+        public async Task<String> PostTicketsAsync([FromBody] PostTicketFreshDesk data)
         {
+            String id = String.Empty;
+
             try
             {
                 var dataAsString = JsonConvert.SerializeObject(data);
@@ -208,12 +210,20 @@ namespace ApiTicketingTool.Controllers
                 var url = "https://tmconsulting.freshdesk.com/api/v2/tickets";
                 var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");
                 var result = await httpClient.PostAsync(url, content);
-                
-                return Ok(result.StatusCode);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var jsonPuro = await result.Content.ReadAsStringAsync();
+                    dynamic jsonDesarializado = JsonConvert.DeserializeObject(jsonPuro);
+                    id = Convert.ToString(jsonDesarializado["id"]);
+
+                }
+                return id;
+                //return Ok(result.StatusCode);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                throw;
             }
         }
         [ProducesResponseType(200)]
@@ -221,8 +231,10 @@ namespace ApiTicketingTool.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPut("tickets/usersPut/{ticketID}")]
-        public async Task<IActionResult> PutTicketsAsync(string ticketID, [FromBody] PutTicket data)
+        public async Task<String> PutTicketsAsync(string ticketID, [FromBody] PutTicket data)
         {
+            String jsonResponse = String.Empty;
+
             try
             {
                 var csvString = String.Join(",", data.custom_fields.tickets_relacionados);
@@ -232,7 +244,7 @@ namespace ApiTicketingTool.Controllers
 
                 var dataAsString = JsonConvert.SerializeObject(obj);
 
-                var httpClient = new HttpClient();
+                HttpClient httpClient = new HttpClient();
                 string yourusername = "UNGq0cadwojfirXm6U7o";
                 string yourpwd = "X";
 
@@ -247,13 +259,21 @@ namespace ApiTicketingTool.Controllers
                 new MediaTypeWithQualityHeaderValue("application/json"));
                 var url = "https://tmconsulting.freshdesk.com/api/v2/tickets/" + ticketID;
                 var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");
-                var result = await httpClient.PutAsync(url, content);
+                var response = await httpClient.PutAsync(url, content);
 
-                return Ok(result.StatusCode);
-            }
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonPuro = await response.Content.ReadAsStringAsync();
+                    dynamic jsonDesarializado = JsonConvert.DeserializeObject(jsonPuro);
+                    jsonResponse = jsonDesarializado.ToString(); ;
+
+                }
+            
+                    return jsonResponse;
+        }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                throw;
             }
         }
         [ProducesResponseType(200)]
