@@ -188,11 +188,9 @@ namespace ApiTicketingTool.Controllers
         [HttpPost("tickets/users")]
         public async Task<IActionResult> PostTicketsAsync([FromBody] PostTicketFreshDesk data)
         {
-
             try
             {
-                var dataAsString = JsonConvert.SerializeObject(data);
-
+                //var dataAsString = JsonConvert.SerializeObject(data);
                 var httpClient = new HttpClient();
                 string yourusername = "UNGq0cadwojfirXm6U7o";
                 string yourpwd = "X";
@@ -207,10 +205,19 @@ namespace ApiTicketingTool.Controllers
                 httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
                 var url = "https://tmconsulting.freshdesk.com/api/v2/tickets";
-                var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");
-                var result = await httpClient.PostAsync(url, content);
-                
-                return Ok(result.StatusCode);
+
+                JArray jsonArray = JArray.Parse(data.ToString());
+                    foreach(JObject jsonItem in jsonArray.Children<JObject>()) { 
+
+                        foreach(JProperty items in jsonItem.Properties()) { 
+
+                        var dataAsString = JsonConvert.SerializeObject(items);
+                        var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");
+                        var result = await httpClient.PostAsync(url, content);
+
+                        return Ok(result.StatusCode);
+                        }
+                    }
             }
             catch (Exception ex)
             {
