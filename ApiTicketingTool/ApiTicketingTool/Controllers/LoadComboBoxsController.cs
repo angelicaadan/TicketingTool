@@ -49,9 +49,9 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Contact = new Contact();
-                            _Contact.contactID = reader["contactID"].ToString();
-                            _Contact.name = reader["name"].ToString();
-                            _Contact.active = reader["active"].ToString();
+                            _Contact.contactID = reader["contactID"].ToString().Trim();
+                            _Contact.name = reader["name"].ToString().Trim();
+                            _Contact.active = reader["active"].ToString().Trim();
                             _list.Add(_Contact);
                         }
                     }
@@ -82,8 +82,8 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Customer = new Customer();
-                            _Customer.companyID = reader["companyID"].ToString();
-                            _Customer.companyDescription = reader["companyDescription"].ToString();
+                            _Customer.companyID = reader["companyID"].ToString().Trim();
+                            _Customer.companyDescription = reader["companyDescription"].ToString().Trim();
                             _list.Add(_Customer);
                         }
                     }
@@ -114,7 +114,7 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Types = new Types();
-                            _Types.type = reader["type"].ToString();
+                            _Types.type = reader["type"].ToString().Trim();
                             _list.Add(_Types);
                         }
                     }
@@ -145,8 +145,8 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Group = new Group();
-                            _Group.groupID = reader["groupID"].ToString();
-                            _Group.groupDescription = reader["groupDescription"].ToString();
+                            _Group.groupID = reader["groupID"].ToString().Trim();
+                            _Group.groupDescription = reader["groupDescription"].ToString().Trim();
                             _list.Add(_Group);
                         }
                     }
@@ -176,8 +176,8 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Priorities = new Priorities();
-                            _Priorities.priorityID = reader["priorityID"].ToString();
-                            _Priorities.priorityDescription = reader["priorityDescription"].ToString();
+                            _Priorities.priorityID = reader["priorityID"].ToString().Trim();
+                            _Priorities.priorityDescription = reader["priorityDescription"].ToString().Trim();
                             _list.Add(_Priorities);
                         }
                     }
@@ -209,8 +209,8 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Agent = new Agents();
-                            _Agent.agentID = reader["agentID"].ToString();
-                            _Agent.agentDescription = reader["agentDescription"].ToString();
+                            _Agent.agentID = reader["agentID"].ToString().Trim();
+                            _Agent.agentDescription = reader["agentDescription"].ToString().Trim();
                             _list.Add(_Agent);
                         }
                     }
@@ -242,7 +242,7 @@ namespace ApiTicketingTool.Controllers
                         while (await reader.ReadAsync())
                         {
                             _Cotizador = new Cotizador();
-                            _Cotizador.quotationID = reader["quotationID"].ToString();
+                            _Cotizador.quotationID = reader["quotationID"].ToString().Trim();
                             _list.Add(_Cotizador);
                         }
                     }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApiTicketingTool.Models
 {
+    //----Clase para GET de tickets
     public class TicketFreshDesk
     {
 
@@ -14,19 +15,21 @@ namespace ApiTicketingTool.Models
         }
         public int TicketID { get; set; }
         public int? email_config_id { get; set; }
-        public Int64 group_id { get; set; }
-        public int priority { get; set; }
-        public Int64 requester_id { get; set; }
-        public Int64 responder_id { get; set; }
-        public int source { get; set; }
-        public int status { get; set; }//status
+        public Int64? group_id { get; set; }
+        public int? priority { get; set; }
+        public Int64? requester_id { get; set; }
+        public Int64? responder_id { get; set; }
+        public int? source { get; set; }
+        public int? status { get; set; }//status
         public string subject { get; set; }
-        public int? product_id { get; set; }
+        //public int? product_id { get; set; }
         public string type { get; set; }
         public string description { get; set; }
         public Json custom_fields { get; set; }
         public string tags { get; set; }
     }
+    //----Clases para POST de tickets
+
     public class PostTicketFreshDesk
     {
         public int? email_config_id { get; set; }
@@ -35,7 +38,7 @@ namespace ApiTicketingTool.Models
         public Int64 requester_id { get; set; }
         public Int64 responder_id { get; set; }
         public int source { get; set; }
-        public int status { get; set; }//status
+        public int status { get; set; }
         public string subject { get; set; }
         public int? product_id { get; set; }
         public string type { get; set; }
@@ -70,27 +73,28 @@ namespace ApiTicketingTool.Models
         public string se_incluyeron_objetos_de_seguridad { get; set; }
 
     }
+    //----Clases para PUT de tickets
 
     public class JsonPut
     {
         public List<string> tickets_relacionados { get; set; }
 
     }
-    public class PutTicketFreshDesk
+    public class PutTicket
     {
         public JsonPut custom_fields { get; set; }
     }
-    public class JsonPut2
+    public class JsonPutstring
     {
         public string tickets_relacionados { get; set; }
 
     }
-    public class Put2TicketFreshDesk
+    public class PutStringTicket
     {
-        public Put2TicketFreshDesk()
+        public PutStringTicket()
         {
-            this.custom_fields = new JsonPut2();
+            this.custom_fields = new JsonPutstring();
         }
-        public JsonPut2 custom_fields { get; set; }
+        public JsonPutstring custom_fields { get; set; }
     }
 }
