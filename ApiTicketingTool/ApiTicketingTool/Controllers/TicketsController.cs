@@ -183,88 +183,87 @@ namespace ApiTicketingTool.Controllers
                 }
             }
         }
-        
+
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        [HttpPost("tickets/users")]
-        public async Task<String> PostTicketsAsync (IEnumerable<PostTicketFreshDesk> data)
+        [HttpPost("tickets/{idTicket}/users")]
+        public async Task<String> PostTicketsAsync(IEnumerable<PostTicketFreshDesk> data, string idTicket)
         {
-            List<String> ticketID = new List<String>();
-              String resultPut = String.Empty;
-            
-            //string id = String.Empty;
-            //String jsonResponse = String.Empty;
-            //string tickets_relacionados = String.Empty;
-            try
             {
-                //foreach (var it in data)
-                //{
-                //    var dataAsString = JsonConvert.SerializeObject(it);
-                //    var httpClient = new HttpClient();
-                //    string yourusername = "UNGq0cadwojfirXm6U7o";
-                //    string yourpwd = "X";
+                List<String> ticketID = new List<String>() { idTicket };
+                String resultPut = String.Empty;
 
-
-                //    httpClient.DefaultRequestHeaders.Authorization =
-                //      new AuthenticationHeaderValue(
-                //          "Basic", Convert.ToBase64String(
-                //              System.Text.ASCIIEncoding.ASCII.GetBytes(
-                //                 $"{yourusername}:{yourpwd}")));
-
-                //    httpClient.DefaultRequestHeaders.Accept.Add(
-                //    new MediaTypeWithQualityHeaderValue("application/json"));
-                //    var url = "https://tmconsulting.freshdesk.com/api/v2/tickets";
-                //    var content = new StringContent(dataAsString, Encoding.UTF8, "application/json");---------------------------------------------------------Todo esto está comentado para que no se creen más tickets
-                //    var result = await httpClient.PostAsync(url, content);
-
-                //    if (result.IsSuccessStatusCode)
-                //    {
-                //        var jsonPuro = await result.Content.ReadAsStringAsync();
-                //        dynamic jsonDesarializado = JsonConvert.DeserializeObject(jsonPuro);
-                //        ticketID.Add(Convert.ToString(jsonDesarializado["id"]));
-                //    }
-                //}
-               
-                var valor = 4185;
-                for (var i=0; i<2; i++)//------------------------------------------------------------------------------------------------------------Este ciclo lo hice para probar hasta que funcione el put con los tickets que ya creé y 
-                {//----------------------------------------------------------------------------------------------------------------------------------------luego si crear nuevos tickets con el post directo.
-
-                    ticketID.Add(valor.ToString());
-                    valor++;
-                }
-                foreach (var item in ticketID)
+                try
                 {
-                    PutTicket jsonPut = new PutTicket();
-                    List<String> _listID = new List<String>();
-
-                    foreach (var item2 in ticketID)
+                    foreach (var it in data)
                     {
-                        if (item != item2)
+                        var dataAsString = JsonConvert.SerializeObject(it);
+                        var httpClient = new HttpClient();
+                        string yourusername = "UNGq0cadwojfirXm6U7o";
+                        string yourpwd = "X";
+
+
+                        httpClient.DefaultRequestHeaders.Authorization =
+                          new AuthenticationHeaderValue(
+                              "Basic", Convert.ToBase64String(
+                                  System.Text.ASCIIEncoding.ASCII.GetBytes(
+                                     $"{yourusername}:{yourpwd}")));
+
+                        httpClient.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+                        var url = "https://tmconsulting.freshdesk.com/api/v2/tickets";
+                        var content = new StringContent(dataAsString, Encoding.UTF8, "application/json"); 
+                        var result = await httpClient.PostAsync(url, content);
+
+                        if (result.IsSuccessStatusCode)
                         {
-                            _listID.Add(item2);
+                            var jsonPuro = await result.Content.ReadAsStringAsync();
+                            dynamic jsonDesarializado = JsonConvert.DeserializeObject(jsonPuro);
+                            ticketID.Add(Convert.ToString(jsonDesarializado["id"]));
                         }
                     }
-                    jsonPut.custom_fields.tickets_relacionados =_listID;//JsonConvert.SerializeObject(_listID);
-                //    jsonResponse = JsonConvert.DeserializeObject(jsonPut);
-                     resultPut = await PutTicketsAsync(item, jsonPut);
-                }
-                return resultPut;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                    
+
+
+                    foreach (var id in ticketID)
+                    {
+                        foreach (var item in ticketID)
+                        {
+                            PutStringTicket jsonPut = new PutStringTicket();
+
+                            List<String> _listID = new List<String>();
+
+                            foreach (var item2 in ticketID)
+                            {
+                                if (item != item2)
+                                {
+                                    _listID.Add(item2);
+                                }
+                            }
+                            jsonPut.custom_fields.tickets_relacionados = String.Join(",", _listID);
+                            resultPut = await PutTicketsAsync(item, jsonPut);
+                        }
+
+                    }
+                    return resultPut;
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
-
+    
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPut("tickets/usersPut/{ticketID}")]
-        public async Task<String> PutTicketsAsync(string ticketID, [FromBody] PutTicket data)
+        public async Task<String> PutTicketsAsync(string ticketID, [FromBody] PutStringTicket data)
         {
             String jsonResponse = String.Empty;
 
